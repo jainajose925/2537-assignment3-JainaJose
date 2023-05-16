@@ -16,6 +16,8 @@ function updatePageInfo(currentPage, itemsPerPage, totalItems) {
 
 const updatePaginationDiv = (currentPage, numPages) => {
   $('#pagination').empty();
+  console.log(currentPage)
+  console.log(numPages)
 
   const totalPages = numPages;
   let startPage, endPage;
@@ -24,15 +26,15 @@ const updatePaginationDiv = (currentPage, numPages) => {
     startPage = 1;
     endPage = totalPages;
   } else {
-    if (currentPage <= 4) {
+    if (currentPage <= 3) {
       startPage = 1;
       endPage = 5;
-    } else if (currentPage >= totalPages - 1) {
-      startPage = totalPages - 4;
+    } else if (currentPage >= totalPages - 2) {
+      startPage = Math.max(totalPages - 4, 1);
       endPage = totalPages;
     } else {
-      startPage = currentPage - 1;
-      endPage = currentPage + 1;
+      startPage = currentPage - 2;
+      endPage = currentPage + 2;
     }
   }
 
@@ -43,9 +45,11 @@ const updatePaginationDiv = (currentPage, numPages) => {
   }
 
   for (let i = startPage; i <= endPage; i++) {
+    if(i > totalPages) {break;}
     $('#pagination').append(`
       <button class="btn btn-primary page ml-1 numberedButtons${i === currentPage ? ' active' : ''}" value="${i}">${i}</button>
     `);
+
   }
 
   if (currentPage < totalPages) {
@@ -92,7 +96,7 @@ const setup = async () => {
    });
 
   paginate(currentPage, PAGE_SIZE, pokemons)
-  const numPages = Math.ceil(pokemons.length / PAGE_SIZE)
+  var numPages = Math.ceil(pokemons.length / PAGE_SIZE)
   updatePaginationDiv(currentPage, numPages)
 
   updatePageInfo(currentPage, PAGE_SIZE, pokemons.length)
@@ -188,10 +192,10 @@ const setup = async () => {
 
     pokemons = result;
 
-    paginate(1, PAGE_SIZE, result);
-    updatePaginationDiv(1, Math.ceil(result.length / PAGE_SIZE));
-    updatePageInfo(1, PAGE_SIZE, result.length); 
-  
+    numPages = Math.ceil(pokemons.length / PAGE_SIZE)
+    paginate(currentPage, PAGE_SIZE, result);
+    updatePaginationDiv(currentPage, Math.ceil(result.length / PAGE_SIZE));
+    updatePageInfo(currentPage, PAGE_SIZE, result.length); 
   })
 }
 
